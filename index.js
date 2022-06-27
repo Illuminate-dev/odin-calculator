@@ -32,7 +32,11 @@ function operate(num1, num2, operator) {
 }
 
 function updateDisplay() {
-    display.textContent = displayValue;
+    let valueToDisplay = displayValue;
+    if (displayValue.length > 8) {
+        valueToDisplay = displayValue.substring(displayValue.length - 8);
+    }
+    display.textContent = valueToDisplay;
 }
 
 const numpadButtons = document.querySelector('.numpad').querySelectorAll('.numpad-button');
