@@ -39,7 +39,11 @@ body {
 
 .whitespace-button {
     border: none;
-    background-color: #444;
+    background-color: #333;
+}
+
+.button-clear {
+    width: 300px;
 }
 
 button {
@@ -57,4 +61,5 @@ button {
     text-align: right;
     padding: 5px;
     color: lightgrey;
+    height: 97px;
 }
