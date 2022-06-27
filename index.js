@@ -1,10 +1,18 @@
 const display = document.querySelector('.display');
+const operators = document.querySelectorAll('.operator-button');
 let displayValue = '';
 let overwrite = false;
 let num1 = 0;
 let num2 = 0;
 let operator = '';
+let elemToChangeBack = null;
 
+function changeColorBack() {
+    if (elemToChangeBack) {
+        elemToChangeBack.style.backgroundColor = '#333';
+        elemToChangeBack = null;
+    }
+}
 
 function add(num1, num2) {
     return num1 + num2;
@@ -52,7 +60,11 @@ function updateDisplay() {
 function evaluate() {
     num2 = displayValue;
     console.log(`num1: ${num1}, num2: ${num2}, operator: ${operator}`)
-    displayValue = operate(num1, num2, operator);
+    let out = operate(num1, num2, operator);
+    if(out.toString().includes('.')) {
+        out = out.toFixed(7 - Math.round(out.toString()).toString().length );
+    }
+    displayValue = out.toString();
     updateDisplay();
     operator = '';
     overwrite = true;
@@ -91,6 +103,7 @@ function handleNumpad(key) {
     }
     displayValue += key;
     updateDisplay();
+
 }
 
 function handleOperator(key) {
@@ -101,20 +114,27 @@ function handleOperator(key) {
         if(!operator || !num1 ) {
             return;
         }
+        changeColorBack();
         evaluate();
         return;
     }
     if (operator !== '') {
         evaluate();
     }
+    changeColorBack();
     operator = key;
     num1 = displayValue;
     updateDisplay();
     displayValue = '';
+    let elem = Array.from(operators).find(val => val.textContent === key)
+    
+    elem.style.backgroundColor = '#555'
+    elemToChangeBack = elem;
 }
 
 window.addEventListener('keydown', (e) => {
     key = e.key;
+    changeColorBack();
     if (!isNaN(parseInt(key)) || key === '.') {
         handleNumpad(key);
     } else if (['+', '-', '/', '*', '='].includes(key)) {
@@ -131,6 +151,7 @@ window.addEventListener('keydown', (e) => {
 })
 
 document.querySelector('.button-clear').addEventListener('click', () => {
+    changeColorBack();
     num1 = 0;
     num2 = 0;
     operator = '';
@@ -147,11 +168,13 @@ document.querySelector('.button-plusorminus').addEventListener('click', e => {
     updateDisplay();
 })
 
-document.querySelectorAll('.operator-button').forEach((btn) => {btn.addEventListener('click', (e) => {
+operators.forEach((btn) => {btn.addEventListener('click', (e) => {
     if (displayValue === '') {
         return;
     }
     if (btn.id === 'evaluate') {
+        changeColorBack();
+
         if(!operator || !num1 ) {
             return;
         }
@@ -161,10 +184,13 @@ document.querySelectorAll('.operator-button').forEach((btn) => {btn.addEventList
     if (operator !== '') {
         evaluate();
     }
+    changeColorBack();
     operator = e.target.textContent;
     num1 = displayValue;
     updateDisplay();
     displayValue = '';
+    btn.style.backgroundColor = '#555'
+    elemToChangeBack = btn;
     
 })});
 
