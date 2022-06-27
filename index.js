@@ -23,6 +23,9 @@ function divide(num1, num2) {
 }
 
 function operate(num1, num2, operator) {
+    if (num1 == 0 && num2 == 0 && operator === '/') {
+        return ":(";
+    }
     num1 = parseFloat(num1);
     num2 = parseFloat(num2);
 
@@ -55,11 +58,15 @@ function evaluate() {
     overwrite = true;
 }
 
+
 const numpadButtons = document.querySelector('.numpad').querySelectorAll('.numpad-button');
 
 numpadButtons.forEach((btn) => {
     if (btn.classList[1] !== 'button-plusorminus') {
         btn.addEventListener('click', e => {
+            if (btn.classList[1] === 'button-dot' && displayValue.includes('.')) {
+                return;
+            }
             if (overwrite) {
                 displayValue = e.target.textContent;
                 overwrite = false;
@@ -69,6 +76,57 @@ numpadButtons.forEach((btn) => {
             displayValue += e.target.textContent;
             updateDisplay();
         })
+    }
+})
+
+function handleNumpad(key) {
+    if (key==='.' && displayValue.includes('.')) {
+        return;
+    }
+    if (overwrite) {
+        displayValue = key;
+        overwrite = false;
+        updateDisplay();
+        return;
+    }
+    displayValue += key;
+    updateDisplay();
+}
+
+function handleOperator(key) {
+    if (displayValue === '') {
+        return;
+    }
+    if (key === '=') {
+        if(!operator || !num1 ) {
+            return;
+        }
+        evaluate();
+        return;
+    }
+    if (operator !== '') {
+        evaluate();
+    }
+    operator = key;
+    num1 = displayValue;
+    updateDisplay();
+    displayValue = '';
+}
+
+window.addEventListener('keydown', (e) => {
+    key = e.key;
+    if (!isNaN(parseInt(key)) || key === '.') {
+        handleNumpad(key);
+    } else if (['+', '-', '/', '*', '='].includes(key)) {
+        handleOperator(key);
+    } else if (key === 'Backspace') {
+        num1 = 0;
+        num2 = 0;
+        operator = '';
+        displayValue = '';
+        updateDisplay();
+    } else if (key === 'Enter') {
+        handleOperator('=')
     }
 })
 
@@ -94,6 +152,9 @@ document.querySelectorAll('.operator-button').forEach((btn) => {btn.addEventList
         return;
     }
     if (btn.id === 'evaluate') {
+        if(!operator || !num1 ) {
+            return;
+        }
         evaluate();
         return;
     }
