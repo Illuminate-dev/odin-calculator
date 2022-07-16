@@ -31,7 +31,7 @@ function divide(num1, num2) {
 }
 
 function operate(num1, num2, operator) {
-    if (num1 == 0 && num2 == 0 && operator === '/') {
+    if (num2 == 0 && operator === '/') {
         return ":(";
     }
     num1 = parseFloat(num1);
